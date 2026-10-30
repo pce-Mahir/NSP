@@ -82,3 +82,36 @@ def get_history_pdf(analysis_id: str, access_token: str) -> bytes:
     )
     response.raise_for_status()
     return response.content
+
+
+def _career_post(path: str, payload: Dict[str, Any], access_token: str) -> Dict[str, Any]:
+    response = requests.post(
+        f"{_backend_url()}/api/v1/{path}",
+        json=payload,
+        headers=_auth_headers(access_token),
+        timeout=120,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def career_pathways(profile: Dict[str, Any], access_token: str) -> Dict[str, Any]:
+    return _career_post("career/pathways", profile, access_token)
+
+
+def career_roadmap(profile: Dict[str, Any], access_token: str) -> Dict[str, Any]:
+    return _career_post("career/skills-roadmap", profile, access_token)
+
+
+def career_interview(profile: Dict[str, Any], access_token: str) -> Dict[str, Any]:
+    return _career_post("career/interview-prep", profile, access_token)
+
+
+def career_chat(
+    profile: Dict[str, Any],
+    message: str,
+    access_token: str,
+    history: List[Dict[str, str]] | None = None,
+) -> str:
+    payload = {"profile": profile, "message": message, "history": history or []}
+    return _career_post("career/chat", payload, access_token).get("reply", "")

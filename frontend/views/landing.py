@@ -26,9 +26,9 @@ def render():
     # Hero Section
     st.markdown("""
     <div class="main-header">
-        <h1>🎯 ATS Resume Scorer</h1>
-        <h3>Optimize Your Resume for Applicant Tracking Systems</h3>
-        <p>Get instant feedback on your resume's ATS compatibility with AI-powered analysis</p>
+        <h1>CareerPath AI</h1>
+        <h3>AI-Enhanced Career Guidance System for Personalized Career Pathways</h3>
+        <p>Score your resume, then let Gemini recommend pathways, learning plans, and interview prep</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -37,6 +37,19 @@ def render():
     with col2:
         if st.button("🚀 Start Analyzing Your Resume", use_container_width=True, type="primary"):
             st.session_state.current_view = 'scorer'
+            st.rerun()
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        if st.button("🧭 Career Pathways", use_container_width=True):
+            st.session_state.current_view = 'pathways'
+            st.rerun()
+    with c2:
+        if st.button("🗺️ Learning Roadmap", use_container_width=True):
+            st.session_state.current_view = 'roadmap'
+            st.rerun()
+    with c3:
+        if st.button("🎤 Interview Coach", use_container_width=True):
+            st.session_state.current_view = 'interview'
             st.rerun()
     
     st.markdown("---")
@@ -67,10 +80,10 @@ def render():
     
     with col3:
         st.markdown("""
-        ### 🔒 Privacy First
-        All analysis runs locally with no external API calls. Your resume data never leaves your system.
+        ### 🧭 Personalized Pathways
+        Gemini turns your skills and goals into career paths, a 90-day learning roadmap, and interview practice.
         
-        **100% Private & Secure**
+        **Guidance after the score**
         """)
     
     st.markdown("---")

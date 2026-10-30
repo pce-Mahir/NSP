@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class ComponentScores(BaseModel):
     formatting: float
@@ -51,3 +51,25 @@ class AnalysisResponse(BaseModel):
     jd_comparison: Optional[JDComparison] = None
     warnings: List[str] = []
     interpretation: str = ""
+    parsed_profile: Optional[Dict[str, Any]] = None
+    target_role: Optional[str] = None
+
+
+class CareerProfile(BaseModel):
+    name: str = ""
+    professional_summary: str = ""
+    skills: List[str] = []
+    experience: List[Any] = []
+    education: List[Any] = []
+    certifications: List[str] = []
+    projects: List[Any] = []
+    target_role: str = ""
+    career_interests: str = ""
+    experience_level: str = ""
+    job_description: str = ""
+
+
+class CareerChatRequest(BaseModel):
+    profile: CareerProfile = Field(default_factory=CareerProfile)
+    message: str
+    history: List[Dict[str, str]] = []

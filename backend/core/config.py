@@ -12,9 +12,9 @@ except ImportError:
     pass
 
 #api metadata
-APP_TITLE='ATS RESUME ANALYZER API'
-APP_VERSION='1.0.0'
-APP_DESCRIPTION='analyse resumes against job description using nlp + ml'
+APP_TITLE='CareerPath AI'
+APP_VERSION='2.0.0'
+APP_DESCRIPTION='AI-Enhanced Career Guidance System for Personalized Career Pathways'
 
 ALLOWED_ORIGINS = [
     'https://appapppy-ktwxupi73vqhjzweksze9d.streamlit.app/',
@@ -54,6 +54,7 @@ SUPABASE_URL       = os.getenv('SUPABASE_URL', '')
 SUPABASE_KEY       = os.getenv('SUPABASE_KEY', '')          # service_role — DB writes (bypasses RLS)
 SUPABASE_ANON_KEY  = os.getenv('SUPABASE_ANON_KEY', '')     # public anon — frontend auth calls
 SUPABASE_JWT_SECRET= os.getenv('SUPABASE_JWT_SECRET', '')   # used by backend to verify access tokens
-GROQ_API_KEY       = os.getenv('GROQ_API_KEY', '')
+GEMINI_API_KEY     = os.getenv('GEMINI_API_KEY', '')
+GEMINI_MODEL       = os.getenv('GEMINI_MODEL', 'gemini-3.5-flash')
 
 

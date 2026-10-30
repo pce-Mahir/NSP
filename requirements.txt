@@ -1,4 +1,4 @@
-# ATS Resume Scorer — combined backend + frontend dependencies.
+# CareerPath AI — combined backend + frontend dependencies.
 #
 # Install with:
 #     pip install -r requirements.txt
@@ -35,7 +35,7 @@ weasyprint>=60.0
 
 # ── Backend: external services ──
 httpx>=0.27                  # async Supabase REST client
-groq>=0.13                   # Groq LLM client (0.13+ is required for httpx>=0.28 compatibility)
+google-genai>=1.0            # Google Gemini LLM client
 PyJWT[crypto]>=2.8           # verifies Supabase access tokens (HS256)
 
 # ── Frontend ──

@@ -201,9 +201,16 @@ def render() -> None:
             _render_export_buttons(st.session_state["scorer_analysis"])
         return
 
-    # Fresh analysis — drop any cached PDF/result.
+    # Fresh analysis — drop any cached PDF/result and career state.
     st.session_state.pop("scorer_pdf_bytes", None)
     st.session_state.pop("scorer_analysis", None)
+    st.session_state.pop("career_pathways", None)
+    st.session_state.pop("career_roadmap", None)
+    st.session_state.pop("career_interview", None)
+    st.session_state.pop("career_chat", None)
+    st.session_state.pop("career_target_role", None)
+    st.session_state.pop("career_interests", None)
+    st.session_state.pop("career_level", None)
 
     job_description = _read_jd(jd_file, jd_text) if analysis_mode == "Job Description Comparison" else ""
 
@@ -219,6 +226,7 @@ def render() -> None:
         return
 
     st.session_state["scorer_analysis"] = analysis
+    st.session_state["last_job_description"] = job_description
     st.success("✅ Analysis complete!")
     display_results_dashboard(analysis)
     _render_export_buttons(analysis)

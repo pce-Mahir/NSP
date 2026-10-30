@@ -5,7 +5,7 @@ def render():
     """Render the resources page"""
     
     st.title("📚 Resources & Tips")
-    st.markdown("Learn how to optimize your resume for ATS systems")
+    st.markdown("ATS resume advice plus how CareerPath AI uses Gemini for personalized pathways")
     
     # ATS Tips
     st.markdown("## 🎯 ATS Optimization Tips")
@@ -77,3 +77,12 @@ def render():
     # Resume Templates
     st.markdown("## 📄 ATS-Friendly Resume Templates")
     st.info("Coming soon: Downloadable ATS-optimized resume templates")
+
+    st.markdown("---")
+    st.markdown("## 🧭 Using Gemini career guidance")
+    st.markdown("""
+    1. Score a resume so the app has your skills, experience, and projects.
+    2. Open **Career Pathways** to see roles that fit you.
+    3. Open **Learning Roadmap** for a 30/60/90-day skill plan.
+    4. Practice with **Interview Coach**, then ask follow-ups in **Career Advisor**.
+    """)

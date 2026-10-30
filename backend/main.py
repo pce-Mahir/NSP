@@ -17,7 +17,7 @@ logger=logging.getLogger('ats_resume_scorer')
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
-    logger.info('Starting ATS Resume Analyzer API...')
+    logger.info('Starting CareerPath AI API...')
 
     logger.info(f'Loading spaCy NLP model: {SPACY_MODEL_PRIMARY}')
     import spacy
@@ -63,14 +63,19 @@ app.include_router(router)
 @app.get('/')
 async def root():
     return {
-        'name':      'ATS Resume Analyzer API',
+        'name':      'CareerPath AI',
+        'tagline':   'AI-Enhanced Career Guidance System for Personalized Career Pathways',
         'version':   '2.0.0',
         'endpoints': {
-            'POST   /api/v1/analyze-resume': 'Analyze a resume',
-            'GET    /api/v1/history':        'Get user history',
-            'DELETE /api/v1/history/:id':    'Delete a history entry',
-            'GET    /api/v1/health':         'Health check',
-            'POST   /api/v1/generate-pdf':   'Generate PDF report from data',
+            'POST   /api/v1/analyze-resume':      'Analyze a resume',
+            'POST   /api/v1/career/pathways':     'Personalized career pathways',
+            'POST   /api/v1/career/skills-roadmap':'Skills gap and learning plan',
+            'POST   /api/v1/career/interview-prep':'Interview coach',
+            'POST   /api/v1/career/chat':         'Career advisor chat',
+            'GET    /api/v1/history':             'Get user history',
+            'DELETE /api/v1/history/:id':         'Delete a history entry',
+            'GET    /api/v1/health':              'Health check',
+            'POST   /api/v1/generate-pdf':        'Generate PDF report from data',
         },
     }
 

@@ -1,5 +1,8 @@
 """Views package for single-page app architecture"""
 
-from . import landing, scorer, history, resources
+from . import advisor, history, interview, landing, pathways, resources, roadmap, scorer
 
-__all__ = ['landing', 'scorer', 'history', 'resources']
+__all__ = [
+    'landing', 'scorer', 'history', 'resources',
+    'pathways', 'roadmap', 'interview', 'advisor',
+]

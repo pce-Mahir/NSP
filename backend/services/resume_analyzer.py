@@ -2,7 +2,7 @@ import spacy
 from sentence_transformers import SentenceTransformer
 from typing import Dict, List, Optional
 from backend.models.schemas import IssueDetail
-from backend.services.groq_parser import parse_resume, parse_job_description
+from backend.services.gemini_parser import parse_resume, parse_job_description
 from backend.services.jd_matcher import compare_resume_with_jd
 from backend.services.feedback_engine import analyze_issues, generate_issues_summary
 from backend.services.ats_scorer import calculate_overall_score, validate_skills_with_projects
@@ -17,9 +17,9 @@ def analyze_full_resume(
     import logging
     logger = logging.getLogger('ats_resume_scorer')
     parsed_resume = parse_resume(resume_text)
-    logger.info(f"Groq parsed summary: {parsed_resume.get('professional_summary', '')[:100]!r}")
-    logger.info(f"Groq parsed skills count: {len(parsed_resume.get('skills', []))}")
-    logger.info(f"Groq parsed experience count: {len(parsed_resume.get('experience', []))}")
+    logger.info(f"Gemini parsed summary: {parsed_resume.get('professional_summary', '')[:100]!r}")
+    logger.info(f"Gemini parsed skills count: {len(parsed_resume.get('skills', []))}")
+    logger.info(f"Gemini parsed experience count: {len(parsed_resume.get('experience', []))}")
 
     skills          = parsed_resume.get('skills', [])
     projects        = parsed_resume.get('projects', [])
@@ -48,8 +48,11 @@ def analyze_full_resume(
 
     jd_comparison_result = None
     jd_keywords = None
+    parsed_jd = None
+    target_role = ""
     if job_description and job_description.strip():
         parsed_jd = parse_job_description(job_description.strip())
+        target_role = (parsed_jd.get('job_title') or '').strip()
         jd_keywords = list(set(
             parsed_jd.get('keywords', []) +
             parsed_jd.get('required_skills', []) +
@@ -64,6 +67,13 @@ def analyze_full_resume(
             embedder=embedder,
             nlp=nlp,
         )
+
+    if not target_role:
+        exps = parsed_resume.get('experience', [])
+        if exps and isinstance(exps, list) and isinstance(exps[0], dict):
+            target_role = (exps[0].get('job_title') or '').strip()
+    if not target_role and skills:
+        target_role = f"{skills[0]} Specialist"
 
     from backend.utils.file_utils import (
         get_default_grammar_results, get_default_location_results,
@@ -142,6 +152,17 @@ def analyze_full_resume(
         "interpretation":    scores.get('overall_interpretation', ''),
         "skill_validation_details": skill_validation_details,
         "experience_months": experience_months,
+        "target_role": target_role,
+        "parsed_profile": {
+            "name": parsed_resume.get("name") or "",
+            "professional_summary": parsed_resume.get("professional_summary") or "",
+            "skills": skills,
+            "experience": parsed_resume.get("experience", []),
+            "education": parsed_resume.get("education", []),
+            "certifications": parsed_resume.get("certifications", []),
+            "projects": parsed_resume.get("projects", []),
+            "target_role": target_role,
+        },
     }
 
 

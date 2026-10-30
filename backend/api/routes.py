@@ -4,7 +4,14 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 
 from backend.api.auth import get_current_user
-from backend.models.schemas import AnalysisResponse, ComponentScores, JDComparison, SkillValidationDetails
+from backend.models.schemas import (
+    AnalysisResponse,
+    CareerChatRequest,
+    CareerProfile,
+    ComponentScores,
+    JDComparison,
+    SkillValidationDetails,
+)
 from backend.utils.file_utils import (
     get_default_grammar_results,
     get_default_location_results,
@@ -109,7 +116,8 @@ async def analyze_resume(
         matched_keywords=result.get('matched_keywords', []),
         skills=list(result.get('skills', [])[:20]),
         jd_comparison=jd_comparison_result,
-        interpretation=result.get('interpretation', '')
+        interpretation=result.get('interpretation', ''),
+        parsed_profile=result.get('parsed_profile'),
     )
 
 
@@ -124,10 +132,12 @@ async def analyze_resume(
 @router.get('/health')
 async def health_check(request: Request):
     """Health check — confirms models are loaded and the API is ready."""
+    from backend.services.gemini_client import gemini_configured
     return {
         'status':          'healthy',
         'nlp_loaded':      request.app.state.nlp is not None,
         'embedder_loaded': request.app.state.embedder is not None,
+        'gemini_configured': gemini_configured(),
     }
 
 @router.get('/history')
@@ -215,3 +225,69 @@ async def generate_history_pdf(
     except Exception as e:
         logger.error(f'Failed to generate PDF for history: {e}')
         raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {e}")
+
+
+def _gemini_http_error(exc: Exception) -> HTTPException:
+    message = str(exc)
+    if 'GEMINI_API_KEY' in message:
+        return HTTPException(
+            status_code=503,
+            detail='Gemini is not configured. Add GEMINI_API_KEY to your .env file.',
+        )
+    logger.error(f'Gemini career guidance failed: {exc}')
+    return HTTPException(status_code=502, detail=f'Gemini request failed: {exc}')
+
+
+@router.post('/career/pathways')
+async def career_pathways(
+    profile: CareerProfile,
+    user_id: str = Depends(get_current_user),
+):
+    from backend.services.career_guidance import recommend_pathways
+    try:
+        return recommend_pathways(profile.model_dump())
+    except Exception as exc:
+        raise _gemini_http_error(exc)
+
+
+@router.post('/career/skills-roadmap')
+async def career_skills_roadmap(
+    profile: CareerProfile,
+    user_id: str = Depends(get_current_user),
+):
+    from backend.services.career_guidance import build_skills_roadmap
+    try:
+        return build_skills_roadmap(profile.model_dump())
+    except Exception as exc:
+        raise _gemini_http_error(exc)
+
+
+@router.post('/career/interview-prep')
+async def career_interview_prep(
+    profile: CareerProfile,
+    user_id: str = Depends(get_current_user),
+):
+    from backend.services.career_guidance import generate_interview_prep
+    try:
+        return generate_interview_prep(profile.model_dump())
+    except Exception as exc:
+        raise _gemini_http_error(exc)
+
+
+@router.post('/career/chat')
+async def career_advisor_chat(
+    payload: CareerChatRequest,
+    user_id: str = Depends(get_current_user),
+):
+    from backend.services.career_guidance import career_chat
+    if not payload.message.strip():
+        raise HTTPException(status_code=422, detail='Message cannot be empty')
+    try:
+        reply = career_chat(
+            payload.profile.model_dump(),
+            payload.message.strip(),
+            payload.history,
+        )
+        return {'reply': reply}
+    except Exception as exc:
+        raise _gemini_http_error(exc)

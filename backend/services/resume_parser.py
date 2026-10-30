@@ -46,13 +46,19 @@ def validate_file(file_data:bytes, filename:str)->Tuple[bool, str, Optional[str]
         return False, f"error deteminin the file type : {e}", None
     
     if mime_type not in SUPPORTED_MIME_TYPES:
+        from pathlib import Path
+        ext = Path(filename).suffix.lower()
+        if ext == '.pdf':
+            return True, '', 'pdf'
+        elif ext == '.docx':
+            return True, '', 'docx'
+        elif ext == '.doc':
+            return True, '', 'doc'
         supported=', '.join(SUPPORTED_MIME_TYPES.keys()).upper()
         return False, (
             f'Unsupported file type: {mime_type}. '
             f'Please upload one of: {supported}.'
         ), None
-    
-    
 
     return True, '', SUPPORTED_MIME_TYPES[mime_type]
 

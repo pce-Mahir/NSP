@@ -8,8 +8,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Configure page
 st.set_page_config(
-    page_title="ATS Resume Scorer",
-    page_icon="🎯",
+    page_title="CareerPath AI",
+    page_icon="🧭",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -80,6 +80,24 @@ with st.sidebar:
     
     if st.button("📚 Resources", use_container_width=True):
         st.session_state.current_view = 'resources'
+        st.rerun()
+
+    st.markdown("### Career guidance")
+
+    if st.button("🧭 Career Pathways", use_container_width=True):
+        st.session_state.current_view = 'pathways'
+        st.rerun()
+
+    if st.button("🗺️ Learning Roadmap", use_container_width=True):
+        st.session_state.current_view = 'roadmap'
+        st.rerun()
+
+    if st.button("🎤 Interview Coach", use_container_width=True):
+        st.session_state.current_view = 'interview'
+        st.rerun()
+
+    if st.button("💬 Career Advisor", use_container_width=True):
+        st.session_state.current_view = 'advisor'
         st.rerun()
     
     st.markdown("---")
@@ -160,7 +178,7 @@ with st.sidebar:
             st.session_state.access_token  = "guest-token"
             st.session_state.refresh_token = "guest-refresh"
             st.session_state.user_id       = "guest-user"
-            st.session_state.user_email    = "guest@ats-demo.local"
+            st.session_state.user_email    = "guest@careerpath-demo.local"
             st.rerun()
 
 # Main content area - render based on current view
@@ -180,6 +198,21 @@ elif st.session_state.current_view == 'history':
     history.render()
 
 elif st.session_state.current_view == 'resources':
-    # Import and render resources page
     from frontend.views import resources
     resources.render()
+
+elif st.session_state.current_view == 'pathways':
+    from frontend.views import pathways
+    pathways.render()
+
+elif st.session_state.current_view == 'roadmap':
+    from frontend.views import roadmap
+    roadmap.render()
+
+elif st.session_state.current_view == 'interview':
+    from frontend.views import interview
+    interview.render()
+
+elif st.session_state.current_view == 'advisor':
+    from frontend.views import advisor
+    advisor.render()
